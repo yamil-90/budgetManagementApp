@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 
-import globalStyles from './styles'
+import globalStyles from '../styles'
 
 const NewBudget = ({handleNewBudget, budget, setBudget}) => {
     
