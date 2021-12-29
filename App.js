@@ -26,13 +26,15 @@ import BudgetController from './src/components/BudgetController';
 import ExpenseForm from './src/components/ExpenseForm';
 import { generateRandomId } from './src/helpers';
 import ListExpenses from './src/components/ListExpenses';
+import Filter from './src/components/Filter';
 
 
 const App = () => {
   const [isBudgetValid, setIsBudgetValid] = useState(false);
   const [budget, setBudget] = useState('');
   const [expenses, setExpenses] = useState([])
-  const [modal, setModal] = useState(false)
+  const [modal, setModal] = useState(false);
+  const [expense, setExpense] = useState({})
 
   const handleNewBudget = (budget) => {
     if (Number(budget) > 0) {
@@ -44,17 +46,41 @@ const App = () => {
     }
   }
   const handleExpense = (expense) => {
-    if (Object.values(expense).includes('')) {
+    if ([expense.name, expense.amount, expense.category].includes('')) {
       Alert.alert('Error', 'Todos los campos son obligatorios')
       return
     }
-
-    expense.id = generateRandomId()
+    if(expense.id){
+      const expensesUpdated = expenses.map(expenseState => {
+        return expense.id === expenseState.id ? expense : expenseState
+        
+      });
+      setExpenses(expensesUpdated);
+      // console.log(expensesUpdated);
+    }else{
+      expense.id = generateRandomId()
     expense.date = Date.now()
     setExpenses([...expenses, expense])
+    }
     setModal(!modal)
   }
-
+  const deleteExpense = (id)=>{
+    Alert.alert(
+      'Are you sure you want to delete this expense',
+      'Deleted expenses cannot be recovered',
+      [
+        {text: 'No', style:'cancel'},
+        {text: 'Delete', onPress: ()=>{
+          const updatedExpenses = expenses.filter((expenseState)=>{
+            expenseState.id !== id
+          })
+          setExpenses(updatedExpenses)
+          setModal(!modal)
+          setExpense({})
+        }}
+      ]
+    )
+  }
   return (
 
     <View style={styles.container}>
@@ -75,9 +101,12 @@ const App = () => {
             />
           )}
         </View>
+        <Filter/>
         {isBudgetValid && (
           <ListExpenses
             expenses={expenses}
+            setModal={setModal}
+            setExpense={setExpense}
 
           />
         )}
@@ -89,6 +118,9 @@ const App = () => {
             modal={modal}
             setModal={setModal}
             handleExpense={handleExpense}
+            expense={expense}
+            setExpense={setExpense}
+            deleteExpense={deleteExpense}
             />
         </Modal>
       )}
