@@ -1,6 +1,41 @@
 # Budget Management App
 
+with this app you can add your day to day expenses and it will keep track of how much of your budget is available and spent.
 
+* the budget and expenses are saved with asyncStorage
+* the expenses can be edited, deleted and filtered
+* all data can be reset to re-use the app
+
+# Screenshots
+
+![screenshot1](https://github.com/yamil-90/budgetManagementApp/blob/main/assets/screenshots/screenshot1.png?raw=true)
+![screenshot2](https://github.com/yamil-90/budgetManagementApp/blob/main/assets/screenshots/screenshot2.png?raw=true)
+![screenshot3](https://github.com/yamil-90/budgetManagementApp/blob/main/assets/screenshots/screenshot3.png?raw=true)
+
+# Technologies
+
+* @react-native-async-storage/async-storage: "^1.15.14",
+* @react-native-picker/picker: "react-native-picker/picker",
+* intl: "^1.2.5",
+* jsc-android: "^250230.2.1",
+* react: "17.0.2",
+* react-native: "0.66.4",
+* react-native-circular-progress: "^1.3.7",
+* react-native-svg: "^12.1.1"
+  
+# installation
+
+* download/ clone the repo
+
+      yarn install
+
+  then you can test it with 
+
+      react-native start 
+
+  and on a second terminal 
+
+      react-native run-android
 
 ## Issue with toLocaleString not showing the correct currency
 
