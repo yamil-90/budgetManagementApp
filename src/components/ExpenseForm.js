@@ -1,25 +1,53 @@
-import React, {useState} from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, TextInput, Pressable } from 'react-native'
 import { Picker } from '@react-native-picker/picker';
 import globalStyles from '../styles';
 
-const ExpenseForm = ({ handleExpense, setModal }) => {
+const ExpenseForm = ({
+    handleExpense,
+    setModal,
+    setExpense,
+    expense,
+    deleteExpense
+}) => {
     const [name, setName] = useState('')
     const [category, setCategory] = useState('')
-    const [amount, setAmount] = useState('')
-    
+    const [amount, setAmount] = useState('');
+    const [id, setId] = useState('');
+    const [date, setDate] = useState('')
 
-
+    useEffect(() => {
+        if (expense?.name) {
+            setName(expense.name);
+            setCategory(expense.category);
+            setAmount(expense.amount)
+            setId(expense.id);
+            setDate(expense.date)
+        } else {
+            console.log('algo');
+        }
+    }, [expense])
     return (
         <SafeAreaView style={styles.container}>
-            <View>
-                <Pressable style={styles.btnCancel}
-                    onPress={() => setModal(false)}>
-                    <Text style={styles.btnCancelText}>Cancel</Text>
+            <View style={styles.btnContainer}>
+                <Pressable style={[styles.btn, styles.btnCancel]}
+                    onPress={() => {
+                        setExpense({})
+                        setId('')
+                        setModal(false)
+                    }}>
+
+                    <Text style={styles.btnText}>Cancel</Text>
                 </Pressable>
+                {expense?.name && <Pressable style={[styles.btn, styles.btnDelete]}
+                    onPress={() => {
+                        deleteExpense(id)
+                    }}>
+                    <Text style={styles.btnText}>Delete</Text>
+                </Pressable>}
             </View>
             <View style={globalStyles.container}>
-                <Text style={styles.title}>New Expense</Text>
+                <Text style={styles.title}>{expense?.name ? 'Edit Expense' : 'New Expense'}</Text>
                 <View style={styles.field}>
                     <Text style={styles.label}>Name</Text>
                     <TextInput
@@ -45,9 +73,9 @@ const ExpenseForm = ({ handleExpense, setModal }) => {
                         <Picker
                             style={styles.input}
                             selectedValue={category}
-                            onValueChange={(value)=>{
+                            onValueChange={(value) => {
                                 setCategory(value)
-                            } }
+                            }}
                         >
                             <Picker.Item label="-- Select --" value="" />
                             <Picker.Item label="Savings" value="savings" />
@@ -61,8 +89,8 @@ const ExpenseForm = ({ handleExpense, setModal }) => {
                 </View>
                 <Pressable
                     style={styles.submitBtn}
-                    onPress={()=>handleExpense({name, amount, category})}>
-                    <Text style={styles.submitBtnText}>Add Expense</Text>
+                    onPress={() => handleExpense({ name, amount, category, id, date })}>
+                    <Text style={styles.submitBtnText}>{expense?.name ? 'Edit Expense' : 'Add Expense'}</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
@@ -116,14 +144,24 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         fontSize: 15
     },
-    btnCancel: {
-        backgroundColor: '#db2777',
+    btnContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    btn: {
+        flex: 1,
         padding: 10,
         marginTop: 30,
         borderRadius: 10,
         marginHorizontal: 10
     },
-    btnCancelText: {
+    btnCancel: {
+        backgroundColor: '#db2777',
+    },
+    btnDelete: {
+        backgroundColor: 'red'
+    },
+    btnText: {
         textTransform: 'uppercase',
         textAlign: 'center',
         color: '#fff',

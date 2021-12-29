@@ -14,28 +14,37 @@ const iconsDictionary = {
 
 }
 
-const Expense = ({ expense }) => {
+const Expense = ({ expense, setModal, setExpense }) => {
     const { name, category, id, amount, date } = expense
-    console.log(date)
+    
+const handleActions=()=>{
+    setExpense(expense)
+    setModal(true)
+}
+
     return (
-        <View style={styles.container}>
-            <View style={styles.content}>
-                <View style={styles.imageContainer}>
-                    <Image
-                        style={styles.image}
-                        source={iconsDictionary[category]}
-                    />
-                    <View style={styles.textContainer}>
-                        <Text style={styles.category}>{category}</Text>
-                        <Text style={styles.name}>{name}</Text>
-                        <Text style={styles.date}>{formatDate(date)}</Text>
+        <Pressable
+        onPress={handleActions}
+        >
+            <View style={styles.container}>
+                <View style={styles.content}>
+                    <View style={styles.imageContainer}>
+                        <Image
+                            style={styles.image}
+                            source={iconsDictionary[category]}
+                        />
+                        <View style={styles.textContainer}>
+                            <Text style={styles.category}>{category}</Text>
+                            <Text style={styles.name}>{name}</Text>
+                            <Text style={styles.date}>{formatDate(date)}</Text>
+                        </View>
                     </View>
+                    <Text style={styles.amount}>{formatAmount(amount)}</Text>
+
                 </View>
-                <Text style={styles.amount}>{formatAmount(amount)}</Text>
 
             </View>
-
-        </View>
+        </Pressable>
     )
 }
 
@@ -81,8 +90,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: '700'
     },
-    date:{
-        fontWeight:'700',
-        color:'#db2777'
+    date: {
+        fontWeight: '700',
+        color: '#db2777'
     }
 })

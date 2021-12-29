@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Expense from './Expense'
 
-const ListExpenses = ({ expenses }) => {
+const ListExpenses = ({ expenses, setModal, setExpense }) => {
 
     return (
         <View style={styles.container}>
@@ -10,11 +10,13 @@ const ListExpenses = ({ expenses }) => {
             {expenses.length === 0 ?
                 <Text style={styles.noExpenses}>No expenses yet</Text> :
                 expenses.map(expense => {
-                    return( 
-                    <Expense
-                    key={expense.id}
-                        expense={expense}
-                    />)
+                    return (
+                        <Expense
+                            key={expense.id}
+                            expense={expense}
+                            setModal={setModal}
+                            setExpense={setExpense}
+                        />)
                 })}
         </View>
     )
@@ -24,7 +26,7 @@ export default ListExpenses
 
 const styles = StyleSheet.create({
     container: {
-        marginTop:80,
+        marginTop: 30,
         marginBottom: 100
     },
     title: {
@@ -34,9 +36,9 @@ const styles = StyleSheet.create({
         fontWeight: '700'
 
     },
-    noExpenses:{
-        fontSize:20,
-        textAlign:'center',
-        marginVertical:20
+    noExpenses: {
+        fontSize: 20,
+        textAlign: 'center',
+        marginVertical: 20
     }
 })

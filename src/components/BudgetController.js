@@ -3,26 +3,46 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 
 import globalStyles from '../styles';
 import { formatAmount } from '../helpers';
-
+import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 const BudgetController = ({ budget, expenses }) => {
 
     const [available, setAvailable] = useState(0);
     const [spent, setSpent] = useState(0);
+    const [percentageSpent, setPercentageSpent] = useState(0)
     useEffect(() => {
         const amountSpent = expenses.reduce((total, expense)=>Number(expense.amount) + total, 0)
         setSpent(amountSpent);
 
         const amountAvailable = budget - amountSpent;
+        const resultPercentage = amountAvailable*100/budget
         setAvailable(amountAvailable)
+        setTimeout(()=>{
+            setPercentageSpent(resultPercentage)
+        }, 1000)
     }, [expenses])
     return (
         <View style={globalStyles.container}>
             <View style={styles.centerImage}>
-                <Image
-                    source={require('../../assets/grafico.jpg')}
-                    style={styles.image}
-                />
+            <AnimatedCircularProgress
+            size={220}
+            width={15}
+            fill={percentageSpent}
+            lineCap='round'
+            tintColor="#00e0ff"
+            onAnimationComplete={() => console.log('onAnimationComplete')}
+            backgroundColor="#fff"
+            rotation={0} >
+                {
+                ()=>(
+                    <>
+                    <Text style={styles.centerProgress}>{Math.round(percentageSpent)}%</Text>
+                    <Text>available</Text>
+                    </>
+                )
+            }
+            </AnimatedCircularProgress>
+            
             </View>
             <View style={styles.textContainer}>
 
@@ -69,5 +89,8 @@ const styles = StyleSheet.create({
         fontSize: 24,
         textAlign:'center',
         marginBottom:10
+    },
+    centerProgress:{
+        fontSize:60
     }
 })
