@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import Expense from './Expense'
 
 const ListExpenses = ({ expenses, setModal, setExpense, filter, filteredExpenses }) => {
-console.log(filteredExpenses);
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Listing</Text>
@@ -20,19 +20,19 @@ console.log(filteredExpenses);
 
             ) : expenses.map(expense=>{
                 return (
-                    <>
                     <Expense
                         key={expense.id}
                         expense={expense}
                         setModal={setModal}
                         setExpense={setExpense}
-                    />
-                    </>)
+                    />)
             }
 
             )}
-            {expenses.length ===0 || (filteredExpenses.length ===0 && !!filter) && (
-                <Text style={styles.noExpenses}>No expenses</Text>
+            {(expenses.length ===0 || 
+            (filteredExpenses.length ===0 && !!filter)) 
+            && (
+                <Text style={styles.noExpenses}>No expenses </Text>
             )}          
             
         </View>

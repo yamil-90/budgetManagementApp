@@ -6,17 +6,14 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Image,
   Modal,
   Pressable,
-  SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 
@@ -27,6 +24,7 @@ import ExpenseForm from './src/components/ExpenseForm';
 import { generateRandomId } from './src/helpers';
 import ListExpenses from './src/components/ListExpenses';
 import Filter from './src/components/Filter';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const App = () => {
@@ -36,16 +34,72 @@ const App = () => {
   const [modal, setModal] = useState(false);
   const [expense, setExpense] = useState({});
   const [filteredExpenses, setFilteredExpenses] = useState([]);
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState('');
 
-  console.log(filteredExpenses);
+  
+  useEffect(() => {
+    const getExpensesStorage = async () => {
+      try {
+        const expensesStorage = await AsyncStorage.getItem('expenses_planner') ?? []
+        
+        
+          setExpenses(expensesStorage? JSON.parse(expensesStorage): []);
+        
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getExpensesStorage()
+  }, [])
+
+  useEffect(() => {
+      const saveBudgetStorage = async () => {
+        try {
+          await AsyncStorage.setItem('expenses_planner', JSON.stringify(expenses))
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      saveBudgetStorage();
+    
+  }, [expenses])
+
+  useEffect(() => {
+    const getBudgetStorage = async () => {
+      try {
+        const budgetStorage = await AsyncStorage.getItem('budget_planner') ?? false
+        
+        if (Number(budgetStorage) > 0) {
+          setBudget(budgetStorage);
+          setIsBudgetValid(true)
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getBudgetStorage()
+  }, [])
+
+  useEffect(() => {
+    if (isBudgetValid) {
+      const saveBudgetStorage = async () => {
+        try {
+          await AsyncStorage.setItem('budget_planner', budget)
+          console.log('savebudget');
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      saveBudgetStorage();
+    }
+  }, [isBudgetValid])
+
+  // console.log('expenses son',expenses);
   const handleNewBudget = (budget) => {
-    if (Number(budget) > 0) {
-      console.log('valid');
+    if (Number(budget) > 0){
       setIsBudgetValid(true);
     } else {
       Alert.alert('Error', 'budget must be a number greater than 0')
-
     }
   }
   const handleExpense = (expense) => {
@@ -53,37 +107,65 @@ const App = () => {
       Alert.alert('Error', 'Todos los campos son obligatorios')
       return
     }
-    if(expense.id){
+    if (expense.id) {
       const expensesUpdated = expenses.map(expenseState => {
         return expense.id === expenseState.id ? expense : expenseState
-        
+
       });
       setExpenses(expensesUpdated);
       // console.log(expensesUpdated);
-    }else{
+    } else {
       expense.id = generateRandomId()
-    expense.date = Date.now()
-    setExpenses([...expenses, expense])
+      expense.date = Date.now()
+      setExpenses([...expenses, expense])
     }
     setModal(!modal)
   }
-  const deleteExpense = (id)=>{
+  const deleteExpense = (id) => {
     Alert.alert(
       'Are you sure you want to delete this expense',
       'Deleted expenses cannot be recovered',
       [
-        {text: 'No', style:'cancel'},
-        {text: 'Delete', onPress: ()=>{
-          const updatedExpenses = expenses.filter((expenseState)=>{
-            expenseState.id !== id
-          })
-          setExpenses(updatedExpenses)
-          setModal(!modal)
-          setExpense({})
-        }}
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Delete', onPress: () => {
+            const updatedExpenses = expenses.filter((expenseState) => {
+              expenseState.id !== id
+            })
+            setExpenses(updatedExpenses)
+            setModal(!modal)
+            setExpense({})
+          }
+        }
       ]
     )
   }
+
+  const resetStorage = ()=>{
+    Alert.alert(
+      'Do you wish to reset the app?',
+      'this will delete all the data',
+      [
+        {
+          text: 'no', style: 'cancel'
+        },
+        {
+          text:'Yes, delete', onPress: async()=>{
+            try {
+              await AsyncStorage.clear();
+              // reset all the states
+              setIsBudgetValid(false)
+              setBudget(0)
+              setExpenses([])
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+      ]
+    )
+  }
+
   return (
 
     <View style={styles.container}>
@@ -95,6 +177,7 @@ const App = () => {
               budget={budget}
               setBudget={setBudget}
               expenses={expenses}
+              resetStorage={resetStorage}
             />
           ) : (
             <NewBudget
@@ -106,10 +189,10 @@ const App = () => {
         </View>
         {isBudgetValid && (<>
           <Filter
-          filter={filter}
-          setFilter={setFilter}
-          expenses={expenses}
-          setFilteredExpenses={setFilteredExpenses}
+            filter={filter}
+            setFilter={setFilter}
+            expenses={expenses}
+            setFilteredExpenses={setFilteredExpenses}
           />
           <ListExpenses
             expenses={expenses}
@@ -120,20 +203,20 @@ const App = () => {
 
           /></>
         )}
-      {modal && (
-        <Modal
-        animationType='slide'
-        visible={modal}>
-          <ExpenseForm
-            modal={modal}
-            setModal={setModal}
-            handleExpense={handleExpense}
-            expense={expense}
-            setExpense={setExpense}
-            deleteExpense={deleteExpense}
+        {modal && (
+          <Modal
+            animationType='slide'
+            visible={modal}>
+            <ExpenseForm
+              modal={modal}
+              setModal={setModal}
+              handleExpense={handleExpense}
+              expense={expense}
+              setExpense={setExpense}
+              deleteExpense={deleteExpense}
             />
-        </Modal>
-      )}
+          </Modal>
+        )}
       </ScrollView>
       {isBudgetValid &&
         <Pressable

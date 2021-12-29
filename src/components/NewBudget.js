@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+
 
 import globalStyles from '../styles'
 
-const NewBudget = ({handleNewBudget, budget, setBudget}) => {
-    
+const NewBudget = ({ handleNewBudget, budget, setBudget }) => {
 
 
 
@@ -20,9 +20,9 @@ const NewBudget = ({handleNewBudget, budget, setBudget}) => {
                 multiline={true}
             />
             <Pressable
-            onPress={()=>{
-                handleNewBudget(budget)
-            }}
+                onPress={() => {
+                    handleNewBudget(budget)
+                }}
                 style={styles.btn}
             >
                 <Text style={styles.btnText}>Add Budget</Text>
