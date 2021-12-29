@@ -2,22 +2,39 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Expense from './Expense'
 
-const ListExpenses = ({ expenses, setModal, setExpense }) => {
-
+const ListExpenses = ({ expenses, setModal, setExpense, filter, filteredExpenses }) => {
+console.log(filteredExpenses);
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Listing</Text>
-            {expenses.length === 0 ?
-                <Text style={styles.noExpenses}>No expenses yet</Text> :
-                expenses.map(expense => {
-                    return (
-                        <Expense
-                            key={expense.id}
-                            expense={expense}
-                            setModal={setModal}
-                            setExpense={setExpense}
-                        />)
-                })}
+
+            {filter ? filteredExpenses.map(expense=>{
+                return(<Expense
+                        key={expense.id}
+                        expense={expense}
+                        setModal={setModal}
+                        setExpense={setExpense}
+                    />
+                    )
+            }
+
+            ) : expenses.map(expense=>{
+                return (
+                    <>
+                    <Expense
+                        key={expense.id}
+                        expense={expense}
+                        setModal={setModal}
+                        setExpense={setExpense}
+                    />
+                    </>)
+            }
+
+            )}
+            {expenses.length ===0 || (filteredExpenses.length ===0 && !!filter) && (
+                <Text style={styles.noExpenses}>No expenses</Text>
+            )}          
+            
         </View>
     )
 }

@@ -34,8 +34,11 @@ const App = () => {
   const [budget, setBudget] = useState('');
   const [expenses, setExpenses] = useState([])
   const [modal, setModal] = useState(false);
-  const [expense, setExpense] = useState({})
+  const [expense, setExpense] = useState({});
+  const [filteredExpenses, setFilteredExpenses] = useState([]);
+  const [filter, setFilter] = useState({});
 
+  console.log(filteredExpenses);
   const handleNewBudget = (budget) => {
     if (Number(budget) > 0) {
       console.log('valid');
@@ -101,14 +104,21 @@ const App = () => {
             />
           )}
         </View>
-        <Filter/>
-        {isBudgetValid && (
+        {isBudgetValid && (<>
+          <Filter
+          filter={filter}
+          setFilter={setFilter}
+          expenses={expenses}
+          setFilteredExpenses={setFilteredExpenses}
+          />
           <ListExpenses
             expenses={expenses}
             setModal={setModal}
             setExpense={setExpense}
+            filter={filter}
+            filteredExpenses={filteredExpenses}
 
-          />
+          /></>
         )}
       {modal && (
         <Modal

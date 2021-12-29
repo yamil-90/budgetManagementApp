@@ -1,17 +1,27 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { StyleSheet, Text, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import globalStyles from '../styles';
 
-const Filter = () => {
+const Filter = ({filter, setFilter, setFilteredExpenses, expenses}) => {
+    useEffect(() => {
+        if(filter===''){
+setFilteredExpenses([])
+        }else{
+            const filteredExpensesTemp = expenses.filter((value)=>{
+                return value.category ===filter;
+            })
+            setFilteredExpenses(filteredExpensesTemp)
+        }
+    }, [filter])
     return (
         <View style={styles.container}>
             <Picker
                             // style={styles.input}
-                            // selectedValue={category}
-                            // onValueChange={(value) => {
-                            //     setCategory(value)
-                            // }}
+                            selectedValue={filter}
+                            onValueChange={(value) => {
+                                setFilter(value)
+                            }}
                         >
                             <Picker.Item label="-- Select --" value="" />
                             <Picker.Item label="Savings" value="savings" />
